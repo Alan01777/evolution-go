@@ -215,6 +215,13 @@ func setupRouter(db *gorm.DB, authDB *sql.DB, sqliteDB *sql.DB, config *config.C
 		c.Next()
 	})
 
+	// Stub de compatibilidade: o manager (bundle React em manager/dist) consulta
+	// GET /license/status e só libera o login quando status === "active".
+	// O licenciamento da Evolution Foundation foi removido deste fork.
+	r.GET("/license/status", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "active"})
+	})
+
 	// Passkey ceremony routes — PUBLIC (called by the browser extension from the
 	// web.whatsapp.com origin, gated only by an opaque ephemeral token).
 	passkey_handler.RegisterRoutes(r, whatsmeowService)
